@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Checkout Form</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f8f8f8;
+    }
+    .form-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      max-width: 400px;
+      margin: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .form-container img.logo {
+      max-width: 150px;
+      margin-bottom: 20px;
+    }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+      text-align: left;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 15px;
+      background: #007bff;
+      border: none;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    button:disabled {
+      background: #6c757d;
+      cursor: not-allowed;
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #fff;
+      border-radius: 50%;
+      width: 16px;
+      height: 16px;
+      margin-left: 8px;
+      animation: spin 1s linear infinite;
+      display: none;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .message {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+    @media(max-width: 450px) {
+      .form-container {
+        padding: 15px;
+      }
+      button {
+        font-size: 14px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="form-container">
+  <img class="logo" src="https://cdn.hookrooms.com/book/uploads/69205b5b33808_7removebgpreview-1662189368454.webp" alt="Logo">
+
+  <h2>Checkout</h2>
+
+  <form id="checkoutForm" 
+        action="https://script.google.com/macros/s/AKfycbxHjo8JZhnlzzuFZJ3TyxnntaoZaqY8v9VkFfBeCdWiB_ZbrkC_19cSYBuMKHjF7eM/exec" 
+        method="POST" 
+        target="hidden_iframe" 
+        onsubmit="return handleSubmit(event)">
+        
+    <label for="name">Name *</label>
+    <input id="name" name="name" required>
+
+    <label for="mobile">Mobile Number *</label>
+    <input id="mobile" name="mobile" required oninput="checkCustomer()">
+
+    <label for="genre">Book Genre *</label>
+    <select id="genre" name="genre">
+      <option>Fiction</option>
+      <option>Non-Fiction</option>
+      <option>Kids</option>
+      <option>Coffee Table</option>
+    </select>
+
+    <label for="email">Email *</label>
+    <input id="email" name="email" type="email" required>
+
+    <label for="amount">Amount *</label>
+    <input id="amount" name="amount" required>
+
+    <label for="source">How did you know about us? *</label>
+    <select id="source" name="source">
+      <option>Walk-In</option>
+      <option>Regular</option>
+      <option>Referrals</option>
+      <option>Google</option>
+      <option>Instagram</option>
+      <option>Chat GPT</option>
+    </select>
+
+    <button id="submitBtn" type="submit">
+      Submit
+      <div class="spinner" id="spinner"></div>
+    </button>
+  </form>
+
+  <!-- Inline message -->
+  <div class="message" id="message"></div>
+
+  <!-- Hidden iframe to avoid page reload -->
+  <iframe name="hidden_iframe" style="display:none;" onload="onIframeLoad()"></iframe>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbxHjo8JZhnlzzuFZJ3TyxnntaoZaqY8v9VkFfBeCdWiB_ZbrkC_19cSYBuMKHjF7eM/exec";
+
+/* Auto-fill customer info based on mobile number */
+let checkTimeout;
+async function checkCustomer() {
+  clearTimeout(checkTimeout);
+  const mobile = document.getElementById("mobile").value;
+  if (mobile.length < 6) return;
+
+  checkTimeout = setTimeout(async () => {
+    try {
+      const res = await fetch(`${API_URL}?mobile=${encodeURIComponent(mobile)}`);
+      const data = await res.json();
+      if (data.found) {
+        document.getElementById("name").value = data.name;
+        document.getElementById("email").value = data.email;
+        document.getElementById("genre").value = data.genre;
+        document.getElementById("source").value = data.source;
+      }
+    } catch (err) {
+      console.error("Error fetching customer:", err);
+    }
+  }, 500); // 0.5s delay
+}
+
+/* Handle form submit */
+function handleSubmit(event) {
+  const btn = document.getElementById("submitBtn");
+  const spinner = document.getElementById("spinner");
+  const message = document.getElementById("message");
+
+  btn.disabled = true;
+  spinner.style.display = "inline-block";
+  message.textContent = "";
+
+  return true; // allow submission to hidden iframe
+}
+
+/* Triggered when hidden iframe loads after form submission */
+function onIframeLoad() {
+  const btn = document.getElementById("submitBtn");
+  const spinner = document.getElementById("spinner");
+  const message = document.getElementById("message");
+
+  spinner.style.display = "none";
+  btn.disabled = false;
+  message.textContent = "Submitted Successfully! ✅";
+  message.style.color = "green";
+  document.getElementById("checkoutForm").reset();
+}
+</script>
+
+</body>
+</html>

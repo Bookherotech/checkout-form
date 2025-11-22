@@ -4,54 +4,131 @@
   <title>Checkout Form</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f4f4f6;
+      margin: 0;
       padding: 20px;
-      background: #f8f8f8;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
     }
+
     .form-container {
-      background: white;
-      padding: 20px;
-      border-radius: 8px;
-      max-width: 400px;
-      margin: auto;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: #fff;
+      padding: 30px 25px;
+      border-radius: 14px;
+      max-width: 500px;
+      width: 100%;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
       text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
+
+    .form-container:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+    }
+
     .form-container img.logo {
-      max-width: 150px;
+      max-width: 160px;
       margin-bottom: 20px;
     }
+
+    h2 {
+      color: #333;
+      margin-bottom: 25px;
+      font-weight: 600;
+    }
+
     label {
-      font-weight: bold;
-      margin-top: 10px;
       display: block;
       text-align: left;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      box-sizing: border-box;
-    }
-    button {
+      font-weight: 500;
       margin-top: 15px;
-      background: #007bff;
-      border: none;
-      color: white;
-      font-size: 16px;
+      color: #555;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 15px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 15px;
+      box-sizing: border-box;
+      transition: all 0.2s ease;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #7aa1ff;
+      box-shadow: 0 0 6px rgba(122,161,255,0.3);
+    }
+
+    /* Pill-style checkboxes */
+    #genre-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 5px;
+    }
+
+    #genre-container input[type="checkbox"] {
+      display: none;
+    }
+
+    #genre-container label {
+      padding: 8px 16px;
+      border: 2px solid #ccc;
+      border-radius: 25px;
       cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      background-color: #f5f5f5;
+      color: #555;
+      user-select: none;
+    }
+
+    #genre-container input[type="checkbox"]:checked + label {
+      background-color: #607d8b;
+      color: #fff;
+      border-color: #607d8b;
+    }
+
+    #genre-container label:hover {
+      border-color: #7aa1ff;
+      background-color: #e0e0e0;
+    }
+
+    button {
+      background-color: #607d8b;
+      color: #fff;
+      font-size: 16px;
+      font-weight: 500;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
+      border-radius: 10px;
     }
+
+    button:hover {
+      background-color: #546e7a;
+      transform: translateY(-2px);
+    }
+
     button:disabled {
-      background: #6c757d;
+      background-color: #b0bec5;
       cursor: not-allowed;
+      transform: none;
     }
+
     .spinner {
-      border: 3px solid #f3f3f3;
+      border: 3px solid #e0e0e0;
       border-top: 3px solid #fff;
       border-radius: 50%;
       width: 16px;
@@ -60,20 +137,27 @@
       animation: spin 1s linear infinite;
       display: none;
     }
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
+
     .message {
-      margin-top: 10px;
-      font-weight: bold;
+      margin-top: 12px;
+      font-weight: 500;
+      color: #388e3c;
     }
-    @media(max-width: 450px) {
+
+    @media(max-width: 600px){
       .form-container {
-        padding: 15px;
+        padding: 20px 15px;
+      }
+      #genre-container {
+        flex-direction: column;
       }
       button {
-        font-size: 14px;
+        font-size: 15px;
       }
     }
   </style>
@@ -86,33 +170,46 @@
   <h2>Checkout</h2>
 
   <form id="checkoutForm" 
-        action="https://script.google.com/macros/s/AKfycbxHjo8JZhnlzzuFZJ3TyxnntaoZaqY8v9VkFfBeCdWiB_ZbrkC_19cSYBuMKHjF7eM/exec" 
+        action="https://script.google.com/macros/s/AKfycbyuDkYiR6gHNx_2cIVtxJt1i3oDMXFvQMQ7NUkyxh6ZRpVzxm6MMO9AKc2H4j3Vx9k/exec" 
         method="POST" 
         target="hidden_iframe" 
         onsubmit="return handleSubmit(event)">
-        
+
     <label for="name">Name *</label>
-    <input id="name" name="name" required>
+    <input id="name" name="name" placeholder="Enter full name" required>
 
     <label for="mobile">Mobile Number *</label>
-    <input id="mobile" name="mobile" required oninput="checkCustomer()">
+    <input id="mobile" name="mobile" placeholder="e.g. 501234567" required oninput="checkCustomer()">
 
-    <label for="genre">Book Genre *</label>
-    <select id="genre" name="genre">
-      <option>Fiction</option>
-      <option>Non-Fiction</option>
-      <option>Kids</option>
-      <option>Coffee Table</option>
-    </select>
+    <label>Book Genre *</label>
+    <div id="genre-container">
+      <input type="checkbox" id="genre-fiction" name="genre" value="Fiction">
+      <label for="genre-fiction">Fiction</label>
 
-    <label for="email">Email *</label>
-    <input id="email" name="email" type="email" required>
+      <input type="checkbox" id="genre-nonfiction" name="genre" value="Non-Fiction">
+      <label for="genre-nonfiction">Non-Fiction</label>
+
+      <input type="checkbox" id="genre-kids" name="genre" value="Kids">
+      <label for="genre-kids">Kids</label>
+
+      <input type="checkbox" id="genre-coffee" name="genre" value="Coffee Table">
+      <label for="genre-coffee">Coffee Table</label>
+
+      <input type="checkbox" id="genre-arabic" name="genre" value="Arabic">
+      <label for="genre-arabic">Arabic</label>
+    </div>
+
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" placeholder="Enter your email">
 
     <label for="amount">Amount *</label>
-    <input id="amount" name="amount" required>
+    <input id="amount" name="amount" type="number" min="0" step="0.01" placeholder="Enter amount" required>
+
+    <label for="nationality">Nationality</label>
+    <input id="nationality" name="nationality" type="text" placeholder="Optional">
 
     <label for="source">How did you know about us? *</label>
-    <select id="source" name="source">
+    <select id="source" name="source" required>
       <option>Walk-In</option>
       <option>Regular</option>
       <option>Referrals</option>
@@ -127,41 +224,56 @@
     </button>
   </form>
 
-  <!-- Inline message -->
   <div class="message" id="message"></div>
 
-  <!-- Hidden iframe to avoid page reload -->
   <iframe name="hidden_iframe" style="display:none;" onload="onIframeLoad()"></iframe>
 </div>
 
 <script>
-const API_URL = "https://script.google.com/macros/s/AKfycbxHjo8JZhnlzzuFZJ3TyxnntaoZaqY8v9VkFfBeCdWiB_ZbrkC_19cSYBuMKHjF7eM/exec";
+const API_URL = "https://script.google.com/macros/s/AKfycbyuDkYiR6gHNx_2cIVtxJt1i3oDMXFvQMQ7NUkyxh6ZRpVzxm6MMO9AKc2H4j3Vx9k/exec";
 
-/* Auto-fill customer info based on mobile number */
-let checkTimeout;
+// Debounced Autofill
+let debounceTimer;
 async function checkCustomer() {
-  clearTimeout(checkTimeout);
-  const mobile = document.getElementById("mobile").value;
-  if (mobile.length < 6) return;
+  clearTimeout(debounceTimer);
 
-  checkTimeout = setTimeout(async () => {
+  debounceTimer = setTimeout(async () => {
+    const mobile = document.getElementById("mobile").value.trim();
+    if (mobile.length < 5) return;
+
     try {
       const res = await fetch(`${API_URL}?mobile=${encodeURIComponent(mobile)}`);
       const data = await res.json();
+
       if (data.found) {
         document.getElementById("name").value = data.name;
         document.getElementById("email").value = data.email;
-        document.getElementById("genre").value = data.genre;
-        document.getElementById("source").value = data.source;
+        document.getElementById("amount").value = "";
+        document.getElementById("source").value = "Regular";
+        const natField = document.getElementById("nationality");
+        if (natField) natField.value = data.nationality || "";
+
+        // Autofill pill checkboxes
+        const checkboxes = document.querySelectorAll('#genre-container input[type="checkbox"]');
+        const selectedGenres = (data.genre || "").split(",").map(g => g.trim());
+        checkboxes.forEach(cb => cb.checked = selectedGenres.includes(cb.value));
       }
+
     } catch (err) {
-      console.error("Error fetching customer:", err);
+      console.error("Autofill error:", err);
     }
-  }, 500); // 0.5s delay
+  }, 400);
 }
 
-/* Handle form submit */
+// Form submit UI with genre validation
 function handleSubmit(event) {
+  const checkboxes = document.querySelectorAll('#genre-container input[type="checkbox"]');
+  if (![...checkboxes].some(cb => cb.checked)) {
+    event.preventDefault();
+    alert("Please select at least one book genre.");
+    return false;
+  }
+
   const btn = document.getElementById("submitBtn");
   const spinner = document.getElementById("spinner");
   const message = document.getElementById("message");
@@ -169,11 +281,10 @@ function handleSubmit(event) {
   btn.disabled = true;
   spinner.style.display = "inline-block";
   message.textContent = "";
-
-  return true; // allow submission to hidden iframe
+  
+  return true;
 }
 
-/* Triggered when hidden iframe loads after form submission */
 function onIframeLoad() {
   const btn = document.getElementById("submitBtn");
   const spinner = document.getElementById("spinner");
@@ -182,8 +293,12 @@ function onIframeLoad() {
   spinner.style.display = "none";
   btn.disabled = false;
   message.textContent = "Submitted Successfully! ✅";
-  message.style.color = "green";
+  message.style.color = "#388e3c";
   document.getElementById("checkoutForm").reset();
+
+  // Clear checkboxes
+  const checkboxes = document.querySelectorAll('#genre-container input[type="checkbox"]');
+  checkboxes.forEach(cb => cb.checked = false);
 }
 </script>
 
